@@ -35,4 +35,18 @@ describe("App", () => {
     fireEvent.click(toggle);
     expect(toggle).toHaveAttribute("aria-pressed", "false");
   });
+
+  it("toggles sim intensity with the engage button", async () => {
+    render(<App />);
+
+    const engageButton = await screen.findByTestId("engage-button");
+
+    expect(engageButton).toHaveAttribute("aria-pressed", "true");
+    expect(engageButton).toHaveTextContent("ENGAGED");
+
+    fireEvent.click(engageButton);
+
+    expect(engageButton).toHaveAttribute("aria-pressed", "false");
+    expect(engageButton).toHaveTextContent("DISENGAGED");
+  });
 });

@@ -3,15 +3,18 @@
 fn main() {
     let pool = tauri::async_runtime::block_on(obscura_deck::db::connect_memory())
         .expect("failed to initialize local database");
+    let sim_control = obscura_deck::commands::SimControl::default();
 
     if let Err(error) = tauri::Builder::default()
         .manage(obscura_deck::commands::DeckState { pool })
+        .manage(sim_control)
         .invoke_handler(tauri::generate_handler![
             obscura_deck::commands::modules_list,
             obscura_deck::commands::modules_set_enabled,
             obscura_deck::commands::modules_trigger_test,
             obscura_deck::commands::logs_recent,
-            obscura_deck::commands::sim_status
+            obscura_deck::commands::sim_status,
+            obscura_deck::commands::sim_set_intensity
         ])
         .run(tauri::generate_context!())
     {

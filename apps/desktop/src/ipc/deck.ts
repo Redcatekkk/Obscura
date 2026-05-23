@@ -41,6 +41,15 @@ export async function simStatus(): Promise<SimStatus | null> {
   return tauri.invoke<SimStatus>("sim_status");
 }
 
+export async function simSetIntensity(intensity: number): Promise<SimStatus | null> {
+  const tauri = await resolveTauriCore();
+  if (!tauri) {
+    return null;
+  }
+
+  return tauri.invoke<SimStatus>("sim_set_intensity", { intensity });
+}
+
 export async function logsRecent(limit = 12): Promise<LogLine[]> {
   const tauri = await resolveTauriCore();
   if (!tauri) {

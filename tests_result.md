@@ -157,6 +157,17 @@
 ##         -working: true
 ##         -agent: "main"
 ##         -comment: "Moved the visible module seed table and category helpers out of App.tsx into src/data/functions.ts with focused Vitest coverage. Verified with pnpm --filter @obscura/desktop typecheck, pnpm --filter @obscura/desktop test, cargo test --workspace --all-features, pnpm ci:frontend, and pnpm ci:rust."
+##   - task: "M2 master sim intensity command"
+##     implemented: true
+##     working: true
+##     file: "apps/desktop/src-tauri/src/commands.rs"
+##     stuck_count: 0
+##     priority: "high"
+##     needs_retesting: false
+##     status_history:
+##         -working: true
+##         -agent: "main"
+##         -comment: "Added SimControl state, sim_set_intensity command validation, frontend IPC wrapper, and an optimistic Engage/Disengage master button wired to intensity 50/0. Verified with focused Vitest/Rust tests, pnpm --filter @obscura/desktop typecheck, pnpm --filter @obscura/desktop test, cargo test --workspace --all-features, pnpm ci:frontend, and pnpm ci:rust after cargo fmt."
 ## metadata:
 ##   created_by: "main_agent"
 ##   version: "1.0"
@@ -164,8 +175,8 @@
 ##   run_ui: false
 ## test_plan:
 ##   current_focus:
-##     - "M2 wire master sim intensity command"
 ##     - "M2 replace remaining static frontend module data"
+##     - "M2 live deck:event subscription"
 ##     - "M3 typed IPC generation"
 ##   stuck_tasks: []
 ##   test_all: false
@@ -181,3 +192,5 @@
 ##     -message: "M2 module enable/disable and trigger flow implemented and verified. Continue replacing remaining static frontend data and preparing typed IPC generation."
 ##     -agent: "main"
 ##     -message: "M2 frontend module seed extraction is implemented and locally verified. Next focus is wiring MasterControl Engage/Disengage to a real sim_set_intensity command."
+##     -agent: "main"
+##     -message: "M2 master sim intensity command and frontend Engage/Disengage control are implemented and locally verified. Next focus is replacing remaining static frontend data and adding the live deck:event stream."

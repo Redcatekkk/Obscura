@@ -4,10 +4,24 @@ use crate::modules::{reference_modules, ModuleSummary};
 use crate::simverse::Simverse;
 use serde::{Deserialize, Serialize};
 use sqlx::SqlitePool;
+use std::sync::Mutex;
 use tauri::State;
 
 pub struct DeckState {
     pub pool: SqlitePool,
+}
+
+#[derive(Debug)]
+pub struct SimControl {
+    intensity: Mutex<u8>,
+}
+
+impl Default for SimControl {
+    fn default() -> Self {
+        Self {
+            intensity: Mutex::new(50),
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -23,13 +37,16 @@ pub async fn modules_list(state: State<'_, DeckState>) -> Result<Vec<ModuleSumma
 }
 
 #[tauri::command]
-pub fn sim_status() -> SimStatus {
-    let simverse = Simverse::new(42);
-    SimStatus {
-        seed: simverse.seed(),
-        intensity: 50,
-        event_count: simverse.sample_events().len(),
-    }
+pub fn sim_status(sim: State<'_, SimControl>) -> Result<SimStatus, String> {
+    sim_status_inner(&sim)
+}
+
+#[tauri::command]
+pub async fn sim_set_intensity(
+    sim: State<'_, SimControl>,
+    intensity: u16,
+) -> Result<SimStatus, String> {
+    set_sim_intensity_inner(&sim, intensity).await
 }
 
 #[tauri::command]
@@ -94,9 +111,34 @@ async fn logs_recent_inner(
     ))
 }
 
+fn sim_status_inner(sim: &SimControl) -> Result<SimStatus, String> {
+    let simverse = Simverse::new(42);
+    let intensity = *sim
+        .intensity
+        .lock()
+        .map_err(|_| "sim control lock poisoned".to_string())?;
+
+    Ok(SimStatus {
+        seed: simverse.seed(),
+        intensity,
+        event_count: simverse.sample_events().len(),
+    })
+}
+
+async fn set_sim_intensity_inner(sim: &SimControl, intensity: u16) -> Result<SimStatus, String> {
+    if intensity > 100 {
+        return Err("sim intensity must be in 0..=100".to_string());
+    }
+
+    *sim.intensity
+        .lock()
+        .map_err(|_| "sim control lock poisoned".to_string())? = intensity as u8;
+    sim_status_inner(sim)
+}
+
 #[cfg(test)]
 mod tests {
-    use super::{list_modules_inner, logs_recent_inner, sim_status};
+    use super::{list_modules_inner, logs_recent_inner, set_sim_intensity_inner, sim_status_inner};
     use crate::db::{connect_memory, list_modules, set_module_enabled};
 
     #[tokio::test]
@@ -109,7 +151,8 @@ mod tests {
 
     #[test]
     fn sim_status_reports_deterministic_seed_and_events() {
-        let status = sim_status();
+        let state = super::SimControl::default();
+        let status = sim_status_inner(&state).expect("sim status should load");
 
         assert_eq!(status.seed, 42);
         assert_eq!(status.intensity, 50);
@@ -138,5 +181,25 @@ mod tests {
             .expect("f01 should exist");
 
         assert!(!sniper.enabled);
+    }
+
+    #[tokio::test]
+    async fn sim_intensity_state_updates_and_rejects_out_of_range_values() {
+        let state = super::SimControl::default();
+
+        let updated = set_sim_intensity_inner(&state, 0)
+            .await
+            .expect("zero intensity should be valid");
+        assert_eq!(updated.intensity, 0);
+
+        let updated = set_sim_intensity_inner(&state, 75)
+            .await
+            .expect("midrange intensity should be valid");
+        assert_eq!(updated.intensity, 75);
+
+        let error = set_sim_intensity_inner(&state, 101)
+            .await
+            .expect_err("out-of-range intensity should fail");
+        assert!(error.contains("0..=100"));
     }
 }

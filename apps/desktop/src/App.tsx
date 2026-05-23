@@ -22,6 +22,7 @@ import {
   modulesList,
   modulesSetEnabled,
   modulesTriggerTest,
+  simSetIntensity,
   simStatus,
   type LogLine,
   type ModuleSummary
@@ -70,6 +71,7 @@ export default function App() {
   const [modalOpen, setModalOpen] = useState(false);
   const [modules, setModules] = useState<DeckFunction[]>(deckFunctions);
   const [simSeed, setSimSeed] = useState<number | null>(null);
+  const [simIntensity, setSimIntensity] = useState(50);
   const [logs, setLogs] = useState<LogLine[]>([]);
 
   const filteredFunctions = useMemo(() => {
@@ -105,6 +107,7 @@ export default function App() {
     void simStatus().then((status) => {
       if (mounted && status) {
         setSimSeed(status.seed);
+        setSimIntensity(status.intensity);
       }
     });
 
@@ -133,6 +136,19 @@ export default function App() {
       }
     });
   }
+
+  function toggleSimIntensity() {
+    const nextIntensity = simIntensity > 0 ? 0 : 50;
+    setSimIntensity(nextIntensity);
+    void simSetIntensity(nextIntensity).then((status) => {
+      if (status) {
+        setSimIntensity(status.intensity);
+        setSimSeed(status.seed);
+      }
+    });
+  }
+
+  const simEngaged = simIntensity > 0;
 
   return (
     <main className="app-shell" aria-label="obscura deck workspace" data-testid="app-shell">
@@ -177,9 +193,15 @@ export default function App() {
               />
               <kbd>Ctrl K</kbd>
             </label>
-            <button className="engage-button" type="button" data-testid="engage-button">
+            <button
+              aria-pressed={simEngaged}
+              className="engage-button"
+              onClick={toggleSimIntensity}
+              type="button"
+              data-testid="engage-button"
+            >
               <Zap size={16} />
-              ENGAGED
+              {simEngaged ? "ENGAGED" : "DISENGAGED"}
             </button>
           </div>
         </header>
@@ -195,8 +217,8 @@ export default function App() {
               <p>Local-only command surface with simulated message, guild, voice, and privacy events.</p>
             </div>
             <div className="status-strip">
-              <span className="pulse-dot" />
-              SIM ONLINE
+              <span className={simEngaged ? "pulse-dot" : "idle-dot"} />
+              {simEngaged ? "SIM ONLINE" : "SIM IDLE"}
             </div>
           </div>
 
