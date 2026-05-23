@@ -2,10 +2,10 @@ import { describe, expect, it } from "vitest";
 import { categories, deckFunctions, enabledModuleCount, moduleIds, moduleSeedCount } from "./functions";
 
 describe("deck function seed data", () => {
-  it("contains the 20 visible mock modules", () => {
-    expect(moduleSeedCount).toBe(20);
+  it("contains the full 50-module catalog", () => {
+    expect(moduleSeedCount).toBe(50);
     expect(moduleIds()).toContain("f01");
-    expect(moduleIds()).toContain("f20");
+    expect(moduleIds()).toContain("f50");
   });
 
   it("covers all five categories", () => {

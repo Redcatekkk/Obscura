@@ -234,6 +234,17 @@
 ##         -working: true
 ##         -agent: "main"
 ##         -comment: "Expanded the backend reference module table from 5 to the 20 visible modules, aligned f10/f15/f20 log sources, and updated DB/command tests to require the 20-module seed batch. Verified with focused failing-first Rust tests, pnpm --filter @obscura/desktop test, cargo test --workspace --all-features, pnpm ci:frontend, and pnpm ci:rust after cargo fmt."
+##   - task: "M4 full 50-module catalog"
+##     implemented: true
+##     working: true
+##     file: "apps/desktop/src/data/functions.ts"
+##     stuck_count: 0
+##     priority: "high"
+##     needs_retesting: false
+##     status_history:
+##         -working: true
+##         -agent: "main"
+##         -comment: "Expanded both the frontend seed catalog and backend module reference table from 20 to the full 50-module set, while keeping the simulation-only boundary and updating associated tests to pin f01..f50. Verified with failing-first Rust and Vitest tests, pnpm --filter @obscura/desktop typecheck, pnpm --filter @obscura/desktop test, cargo test --workspace --all-features, pnpm ci:frontend, and pnpm ci:rust."
 ## metadata:
 ##   created_by: "main_agent"
 ##   version: "1.0"
@@ -241,7 +252,6 @@
 ##   run_ui: false
 ## test_plan:
 ##   current_focus:
-##     - "M4 expand backend module coverage to 50"
 ##     - "M3 automate IPC type generation"
 ##   stuck_tasks: []
 ##   test_all: false
@@ -271,3 +281,5 @@
 ##     -message: "M3 IPC types package scaffold is implemented and locally verified. Next focus is automating the generation step and expanding backend module coverage beyond the first reference batch."
 ##     -agent: "main"
 ##     -message: "M4 backend visible module batch is implemented and locally verified. Next focus is expanding toward all 50 modules and automating the IPC generation step."
+##     -agent: "main"
+##     -message: "M4 full 50-module catalog is implemented and locally verified. Next focus is automating IPC type generation to replace the manual package scaffold."
