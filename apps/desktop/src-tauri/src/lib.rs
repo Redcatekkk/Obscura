@@ -17,4 +17,15 @@ mod tests {
     fn app_name_matches_product() {
         assert_eq!(app_name(), "obscura.deck");
     }
+
+    #[test]
+    fn generated_ipc_types_package_exists() {
+        let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("../../../packages/ipc-types/src/index.ts");
+        let contents = std::fs::read_to_string(path).expect("ipc types should be generated");
+
+        assert!(contents.contains("export type ModuleSummary"));
+        assert!(contents.contains("export type SimStatus"));
+        assert!(contents.contains("export type LogLine"));
+    }
 }

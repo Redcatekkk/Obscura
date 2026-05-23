@@ -1,38 +1,13 @@
 import { deckFunctions } from "../data/functions";
+import type {
+  DeckEventPayload,
+  LogLine,
+  ModuleConfig,
+  ModuleSummary,
+  SimStatus
+} from "@obscura/ipc-types";
 
-export type DeckCategory = "Automation" | "Utility" | "Privacy" | "Stats" | "Fun";
-
-export type ModuleSummary = {
-  id: string;
-  name: string;
-  category: DeckCategory;
-  description: string;
-  enabled: boolean;
-};
-
-export type SimStatus = {
-  seed: number;
-  intensity: number;
-  event_count: number;
-};
-
-export type LogLevel = "Info" | "Warn" | "Error";
-
-export type LogLine = {
-  ts: string;
-  level: LogLevel;
-  source: string;
-  text: string;
-};
-
-export type DeckEventPayload = LogLine;
-
-export type ModuleConfig = {
-  capture_window_minutes?: number;
-  channel_scope?: string;
-  storage_mode?: string;
-  redaction?: boolean;
-};
+export type { DeckEventPayload, LogLine, ModuleConfig, ModuleSummary, SimStatus };
 
 export async function modulesList(): Promise<ModuleSummary[]> {
   const tauri = await resolveTauriCore();

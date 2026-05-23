@@ -212,6 +212,17 @@
 ##         -working: true
 ##         -agent: "main"
 ##         -comment: "Removed App.tsx's direct seed-table dependency and shifted the browser fallback into the IPC layer so the visible library is sourced through the same wrapper as Tauri. Updated the library label from Static module matrix to Live module matrix and verified with a failing-first App test plus pnpm --filter @obscura/desktop typecheck, pnpm --filter @obscura/desktop test, cargo test --workspace --all-features, pnpm ci:frontend, and pnpm ci:rust."
+##   - task: "M3 IPC types package scaffold"
+##     implemented: true
+##     working: true
+##     file: "packages/ipc-types/src/index.ts"
+##     stuck_count: 0
+##     priority: "high"
+##     needs_retesting: false
+##     status_history:
+##         -working: true
+##         -agent: "main"
+##         -comment: "Added @obscura/ipc-types workspace package, generated-style command/type contract, frontend dependency and path mapping, IPC wrapper type imports/re-exports, and a Rust smoke test asserting the generated package exists. Verified with pnpm install, pnpm --filter @obscura/desktop typecheck, pnpm --filter @obscura/desktop test, cargo test --workspace --all-features, pnpm ci:frontend, and pnpm ci:rust."
 ## metadata:
 ##   created_by: "main_agent"
 ##   version: "1.0"
@@ -219,7 +230,8 @@
 ##   run_ui: false
 ## test_plan:
 ##   current_focus:
-##     - "M3 typed IPC generation"
+##     - "M4 expand backend module coverage"
+##     - "M3 automate IPC type generation"
 ##   stuck_tasks: []
 ##   test_all: false
 ##   test_priority: "high_first"
@@ -244,3 +256,5 @@
 ##     -message: "M2 live KPI row derivation is implemented and locally verified. Next focus is removing duplicate/static frontend data sources and preparing typed IPC generation."
 ##     -agent: "main"
 ##     -message: "M2 live module list source-of-truth cleanup is implemented and locally verified. Next focus is typed IPC generation for M3."
+##     -agent: "main"
+##     -message: "M3 IPC types package scaffold is implemented and locally verified. Next focus is automating the generation step and expanding backend module coverage beyond the first reference batch."
