@@ -1,5 +1,7 @@
 use crate::bus::{LogLevel, LogLine};
+use crate::engine::run_reference_modules;
 use crate::modules::{Category, ModuleSummary};
+use crate::simverse::Simverse;
 use sqlx::{sqlite::SqlitePoolOptions, Row, SqlitePool};
 
 type DbResult<T> = Result<T, Box<dyn std::error::Error + Send + Sync>>;
@@ -11,7 +13,17 @@ pub async fn connect_memory() -> DbResult<SqlitePool> {
         .await?;
     run_migrations(&pool).await?;
     seed_modules(&pool).await?;
+    bootstrap_logs(&pool).await?;
     Ok(pool)
+}
+
+pub async fn bootstrap_logs(pool: &SqlitePool) -> Result<(), sqlx::Error> {
+    let events = Simverse::new(42).sample_events();
+    let logs = run_reference_modules(&events);
+    for log in &logs {
+        insert_log(pool, log).await?;
+    }
+    Ok(())
 }
 
 pub async fn run_migrations(pool: &SqlitePool) -> DbResult<()> {
@@ -175,6 +187,10 @@ mod tests {
     #[tokio::test]
     async fn module_logs_persist_to_sqlite() {
         let pool = connect_memory().await.expect("db should initialize");
+        let before = recent_logs(&pool, 20)
+            .await
+            .expect("logs should load")
+            .len();
         let logs = run_reference_modules(&Simverse::new(42).sample_events());
         for log in &logs {
             insert_log(&pool, log).await.expect("log should persist");
@@ -182,7 +198,7 @@ mod tests {
 
         let stored = recent_logs(&pool, 20).await.expect("logs should load");
 
-        assert_eq!(stored.len(), logs.len());
+        assert_eq!(stored.len(), before + logs.len());
         assert!(stored.iter().any(|log| log.source == "f01.message_sniper"));
     }
 }

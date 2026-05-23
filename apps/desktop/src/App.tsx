@@ -17,7 +17,7 @@ import {
   Zap
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { modulesList, simStatus, type ModuleSummary } from "./ipc/deck";
+import { logsRecent, modulesList, simStatus, type LogLine, type ModuleSummary } from "./ipc/deck";
 
 type Category = "Automation" | "Utility" | "Privacy" | "Stats" | "Fun";
 
@@ -63,15 +63,6 @@ const navItems: Array<[string, LucideIcon]> = [
   ["Settings", Settings]
 ];
 
-const terminalLines = [
-  ["14:02:01", "INFO", "simverse seed=042 loaded with 12 guilds / 80 users"],
-  ["14:02:04", "OK", "module f01 Message Sniper subscribed to deck:event"],
-  ["14:02:07", "WARN", "bot_adapter disabled by policy; simulation-only mode active"],
-  ["14:02:10", "INFO", "keyword index rebuilt in 21ms"],
-  ["14:02:12", "OK", "privacy rail confirmed: no Discord user-token paths"],
-  ["14:02:15", "INFO", "terminal feed attached to local event stream"]
-] as const;
-
 const kpis = [
   { label: "Active Modules", value: "09", detail: "of 50 planned" },
   { label: "Sim Events", value: "1.8k", detail: "last hour" },
@@ -99,6 +90,7 @@ export default function App() {
   const [modalOpen, setModalOpen] = useState(false);
   const [modules, setModules] = useState<DeckFunction[]>(deckFunctions);
   const [simSeed, setSimSeed] = useState<number | null>(null);
+  const [logs, setLogs] = useState<LogLine[]>([]);
 
   const filteredFunctions = useMemo(() => {
     const normalized = query.trim().toLowerCase();
@@ -133,6 +125,12 @@ export default function App() {
     void simStatus().then((status) => {
       if (mounted && status) {
         setSimSeed(status.seed);
+      }
+    });
+
+    void logsRecent(12).then((items) => {
+      if (mounted && items.length > 0) {
+        setLogs(items);
       }
     });
 
@@ -296,11 +294,17 @@ export default function App() {
                 <Activity size={18} />
               </div>
               <div className="terminal-lines">
-                {terminalLines.map(([time, level, text]) => (
-                  <p key={`${time}-${text}`}>
-                    <span>{time}</span>
-                    <b className={`level-${level.toLowerCase()}`}>{level}</b>
-                    {text}
+                {(logs.length > 0
+                  ? logs
+                  : [
+                      { ts: "14:02:01", level: "Info", source: "seed", text: "simverse seed loaded" },
+                      { ts: "14:02:04", level: "Warn", source: "seed", text: "awaiting live log stream" }
+                    ]
+                ).map((line) => (
+                  <p key={`${line.ts}-${line.source}-${line.text}`}>
+                    <span>{line.ts}</span>
+                    <b className={`level-${line.level.toLowerCase()}`}>{line.level.toUpperCase()}</b>
+                    {line.text}
                   </p>
                 ))}
               </div>

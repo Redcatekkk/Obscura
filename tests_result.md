@@ -140,6 +140,9 @@
 ##         -working: true
 ##         -agent: "main"
 ##         -comment: "Added typed DeckEvent bus, deterministic Simverse sample generator, five reference module summaries, SQLite repo helpers, Tauri commands, and a UI IPC wrapper with Tauri/browser fallback. Verified with pnpm ci:frontend and pnpm ci:rust."
+##         -working: true
+##         -agent: "main"
+##         -comment: "Extended the backend with SQLite-backed recent logs and a seeded reference engine, then wired the terminal feed to live backend logs with a safe browser fallback. Verified again with pnpm ci:frontend and pnpm ci:rust."
 ## metadata:
 ##   created_by: "main_agent"
 ##   version: "1.0"
@@ -147,8 +150,7 @@
 ##   run_ui: false
 ## test_plan:
 ##   current_focus:
-##     - "M2 backend bus and simverse foundation"
-##     - "M2 log/render integration"
+##     - "M2 module enable/disable and trigger flow"
 ##   stuck_tasks: []
 ##   test_all: false
 ##   test_priority: "high_first"
