@@ -190,6 +190,17 @@
 ##         -working: true
 ##         -agent: "main"
 ##         -comment: "Added SQLite module config storage, get/set repository helpers, modules_get_config/modules_set_config Tauri commands, frontend IPC wrappers, and an editable f01 config modal. Verified with focused DB/command/App tests, pnpm --filter @obscura/desktop typecheck, pnpm --filter @obscura/desktop test, cargo test --workspace --all-features, pnpm ci:frontend, and pnpm ci:rust after cargo fmt."
+##   - task: "M2 live KPI row derivation"
+##     implemented: true
+##     working: true
+##     file: "apps/desktop/src/App.tsx"
+##     stuck_count: 0
+##     priority: "medium"
+##     needs_retesting: false
+##     status_history:
+##         -working: true
+##         -agent: "main"
+##         -comment: "Replaced the static KPI constants with values derived from loaded module state, sim status, log count, and deterministic seed. Verified with a failing-first App test, pnpm --filter @obscura/desktop typecheck, pnpm --filter @obscura/desktop test, cargo test --workspace --all-features, pnpm ci:frontend, and pnpm ci:rust."
 ## metadata:
 ##   created_by: "main_agent"
 ##   version: "1.0"
@@ -198,7 +209,6 @@
 ## test_plan:
 ##   current_focus:
 ##     - "M2 replace remaining static frontend module data"
-##     - "M2 derive live KPI row"
 ##     - "M3 typed IPC generation"
 ##   stuck_tasks: []
 ##   test_all: false
@@ -220,3 +230,5 @@
 ##     -message: "M2 live deck:event terminal feed is implemented and locally verified. Next focus is persisting module config commands and continuing to eliminate remaining static frontend data."
 ##     -agent: "main"
 ##     -message: "M2 module config persistence commands and editable f01 config modal are implemented and locally verified. Next focus is deriving the KPI row from live module/sim/log data and continuing toward typed IPC generation."
+##     -agent: "main"
+##     -message: "M2 live KPI row derivation is implemented and locally verified. Next focus is removing duplicate/static frontend data sources and preparing typed IPC generation."

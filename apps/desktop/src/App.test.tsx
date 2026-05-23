@@ -17,6 +17,18 @@ describe("App", () => {
     expect(screen.getByTestId("disclaimer-card")).toHaveTextContent("Simulation only");
   });
 
+  it("derives KPI values from current deck state", async () => {
+    render(<App />);
+
+    const kpiRow = screen.getByTestId("kpi-row");
+
+    await waitFor(() => {
+      expect(kpiRow).toHaveTextContent("10");
+      expect(kpiRow).toHaveTextContent("5");
+    });
+    expect(kpiRow).not.toHaveTextContent("1.8k");
+  });
+
   it("filters modules and opens the config modal", async () => {
     render(<App />);
 

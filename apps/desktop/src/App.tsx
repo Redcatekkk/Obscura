@@ -47,13 +47,6 @@ const navItems: Array<[string, LucideIcon]> = [
   ["Settings", Settings]
 ];
 
-const kpis = [
-  { label: "Active Modules", value: "09", detail: "of 50 planned" },
-  { label: "Sim Events", value: "1.8k", detail: "last hour" },
-  { label: "Latency", value: "14ms", detail: "local bus" },
-  { label: "Uptime", value: "03:42:19", detail: "operator session" }
-];
-
 const defaultModuleConfig: Required<ModuleConfig> = {
   capture_window_minutes: 10,
   channel_scope: "simverse.guild.*",
@@ -83,6 +76,7 @@ export default function App() {
   const [modules, setModules] = useState<DeckFunction[]>(deckFunctions);
   const [simSeed, setSimSeed] = useState<number | null>(null);
   const [simIntensity, setSimIntensity] = useState(50);
+  const [simEventCount, setSimEventCount] = useState(0);
   const [logs, setLogs] = useState<LogLine[]>([]);
   const [moduleConfig, setModuleConfig] = useState<Required<ModuleConfig>>(defaultModuleConfig);
 
@@ -98,6 +92,16 @@ export default function App() {
       return categoryMatch && queryMatch;
     });
   }, [activeCategory, modules, query]);
+
+  const kpis = useMemo(() => {
+    const activeModules = modules.filter((module) => module.enabled).length;
+    return [
+      { label: "Active Modules", value: String(activeModules).padStart(2, "0"), detail: `of ${modules.length} loaded` },
+      { label: "Sim Events", value: String(simEventCount), detail: `intensity ${simIntensity}` },
+      { label: "Latency", value: `${Math.max(1, logs.length + 4)}ms`, detail: "local bus" },
+      { label: "Seed", value: simSeed === null ? "--" : String(simSeed), detail: "deterministic sim" }
+    ];
+  }, [logs.length, modules, simEventCount, simIntensity, simSeed]);
 
   useEffect(() => {
     let mounted = true;
@@ -120,6 +124,7 @@ export default function App() {
       if (mounted && status) {
         setSimSeed(status.seed);
         setSimIntensity(status.intensity);
+        setSimEventCount(status.event_count);
       }
     });
 
@@ -194,6 +199,7 @@ export default function App() {
       if (status) {
         setSimIntensity(status.intensity);
         setSimSeed(status.seed);
+        setSimEventCount(status.event_count);
       }
     });
   }
