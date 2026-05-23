@@ -101,3 +101,47 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+## user_problem_statement: Continue implementation of obscura.deck from the GitHub repository and keep working until the next milestone slice is complete.
+## backend:
+##   - task: "M0 desktop scaffold"
+##     implemented: true
+##     working: true
+##     file: "apps/desktop/src-tauri/src/main.rs"
+##     stuck_count: 0
+##     priority: "high"
+##     needs_retesting: false
+##     status_history:
+##         -working: true
+##         -agent: "main"
+##         -comment: "M0 scaffold completed, committed, and verified with cargo/pnpm CI commands."
+## frontend:
+##   - task: "M1 static UI shell"
+##     implemented: true
+##     working: true
+##     file: "apps/desktop/src/App.tsx"
+##     stuck_count: 0
+##     priority: "high"
+##     needs_retesting: false
+##     status_history:
+##         -working: false
+##         -agent: "main"
+##         -comment: "Current app is still a minimal empty shell; next step is the static NULLBYTE-style control deck with dense sidebar, function grid, and terminal feed."
+##         -working: true
+##         -agent: "main"
+##         -comment: "Implemented static cyber-terminal control deck with master control, sidebar disclaimer, function library, terminal feed, KPI row, category filters, local search, and f01 config modal. Verified with pnpm ci:frontend and pnpm ci:rust."
+## metadata:
+##   created_by: "main_agent"
+##   version: "1.0"
+##   test_sequence: 1
+##   run_ui: false
+## test_plan:
+##   current_focus:
+##     - "M2 backend bus and simverse foundation"
+##   stuck_tasks: []
+##   test_all: false
+##   test_priority: "high_first"
+## agent_communication:
+##     -agent: "main"
+##     -message: "M0 is committed and stable. Starting M1 static UI work next, with the test-result tracker updated first per repo protocol."
+##     -agent: "main"
+##     -message: "M1 static UI shell implemented and locally verified. Next milestone should start replacing static data with backend bus/simverse flows."

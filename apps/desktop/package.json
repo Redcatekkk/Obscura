@@ -13,10 +13,12 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "lucide-react": "^0.468.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.0.1",
     "@tauri-apps/cli": "^2.6.1",
     "@types/react": "^19.1.5",

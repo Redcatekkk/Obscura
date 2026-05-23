@@ -4,7 +4,7 @@ Native Tauri 2 desktop port of the NULLBYTE control-deck mockup. The app is bein
 
 ## Status
 
-Milestone M0 is closed. The workspace scaffold, desktop shell, CI skeleton, smoke tests, and documentation foundation exist; the M1 visual port, simulation engine, module behavior, and release packaging work are still future milestone work.
+Milestone M0 is closed and the first M1 static control-deck UI shell now exists. The simulation engine, live module behavior, typed IPC, and release packaging work are still future milestone work.
 
 ## Stack
 

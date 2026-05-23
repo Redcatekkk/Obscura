@@ -12,6 +12,7 @@ The format is based on Keep a Changelog, and this project intends to use semanti
 - Tauri 2 + React + TypeScript desktop shell scaffold.
 - Cross-platform CI skeleton for Rust, frontend, and Tauri smoke checks.
 - Documentation foundation for install, development, build, test, CI, and security model.
+- M1 static control-deck UI with master control, sidebar disclaimer, KPI row, module library, terminal feed, category filters, search, and Message Sniper config modal.
 - Minimal React and Rust smoke tests for the bootstrapped shell.
 - M0 milestone closure record.
 
