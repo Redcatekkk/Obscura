@@ -1,0 +1,17 @@
+{
+  "name": "obscura-deck",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "pnpm@9.15.4",
+  "scripts": {
+    "dev": "pnpm --filter @obscura/desktop dev",
+    "tauri": "pnpm --filter @obscura/desktop tauri",
+    "build": "pnpm --filter @obscura/desktop build",
+    "ci:frontend": "pnpm typecheck && pnpm test && pnpm test:e2e && pnpm build",
+    "ci:rust": "cargo fmt --check && cargo test --workspace --all-features",
+    "ci:tauri": "pnpm tauri build --no-bundle",
+    "test": "pnpm --filter @obscura/desktop test",
+    "test:e2e": "pnpm --filter @obscura/desktop test:e2e",
+    "typecheck": "pnpm --filter @obscura/desktop typecheck"
+  }
+}

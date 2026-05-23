@@ -1,0 +1,95 @@
+{
+  "theme": "Dark",
+  "archetype": "Archetype 7: Electric & Neon (Terminal / Hacker Dashboard)",
+  "vibe": "Cyberpunk control deck, retro-futuristic, underground, edgy, terminal-meets-modern-dashboard.",
+  "fonts": {
+    "headings": {
+      "family": "Unbounded",
+      "import": "https://fonts.googleapis.com/css2?family=Unbounded:wght@300;500;700;900&display=swap",
+      "usage": "Used for all major headings, widget titles, and brand logos. Gives a wide, technical, cyberpunk feel."
+    },
+    "body": {
+      "family": "JetBrains Mono",
+      "import": "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap",
+      "usage": "Used for all body text, terminal logs, navigation, and stats. Enforces the CLI/Hacker terminal aesthetic."
+    }
+  },
+  "colors": {
+    "background": {
+      "main": "#050505",
+      "panel": "#0a0a0a",
+      "surface": "#111111"
+    },
+    "text": {
+      "primary": "#ffffff",
+      "secondary": "#a3a3a3",
+      "muted": "#525252"
+    },
+    "accents": {
+      "neon_green": "#00FF41",
+      "cyber_cyan": "#00FFFF",
+      "alert_red": "#FF003C",
+      "warning_yellow": "#FCE205"
+    }
+  },
+  "spacing_and_layout": {
+    "strategy": "The 'Control Room' Grid",
+    "details": "Dense layout, utilizing full screen height. Sidebar for navigation, main content area for the 'Function Library' and top area for Master Control & Terminal logs. Maximize screen real estate. Every widget should have `h-full` to align perfectly with neighbors.",
+    "borders": "Expose the skeleton. Use `border-white/10` for panels. Active/Hover states should glow with `border-[#00FF41]/50`."
+  },
+  "surfaces": {
+    "retro_terminal": "Panels should have a flat #0a0a0a background, sharp 1px borders, and NO soft shadows by default. When hovered or active, introduce a neon glow via `drop-shadow-[0_0_8px_rgba(0,255,65,0.4)]` and text color shift to Neon Green.",
+    "scanlines": "MANDATORY: Add a global or container-specific CSS overlay for scanlines to simulate a CRT terminal monitor. Example: `background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06)); background-size: 100% 2px, 3px 100%; pointer-events: none; opacity: 0.3;`"
+  },
+  "media": {
+    "cyber_avatar": {
+      "url": "https://static.prod-images.emergentagent.com/jobs/fe17fb0e-3c15-4586-9d23-e19f7121cbc6/images/c7e3889c67546a10c068dfe68fb29549d7d78f25d8e1186da630fc300f009662.png",
+      "description": "User profile avatar for the master control panel"
+    },
+    "terminal_bg": {
+      "url": "https://static.prod-images.emergentagent.com/jobs/fe17fb0e-3c15-4586-9d23-e19f7121cbc6/images/350eb532e27d54baae2579f65fbeb5fe247b8817ecd580d2977a4aababd46112.png",
+      "description": "Optional subtle background texture for the entire app or specific hero areas. Use with very low opacity."
+    }
+  },
+  "components_strategy": {
+    "toggles": "Crucial for this app. Build custom HTML/Tailwind toggle switches that look like mechanical/terminal switches. When ON, the track should be #00FF41 with a strong box-shadow glow. When OFF, it should be dark gray.",
+    "terminal_logs": "Build a simulated terminal window. It should stream fake log messages automatically using a React `useEffect` interval. Logs should have timestamps, severity levels (INFO, WARN, ERROR), and color-coding. Use JetBrains Mono text-xs or text-sm.",
+    "cards": "Function cards should have sharp edges (no rounding, or very minimal `rounded-sm`). Display the category as an uppercase tracking-widest badge. Include a small 'status' pulsing dot if the function is active.",
+    "icons": "Use `lucide-react`. Make them sharp. Size 16px or 20px.",
+    "testing": "All interactive elements must have `data-testid`."
+  },
+  "function_ideas": [
+    { "name": "Message Sniper", "category": "Automation", "description": "Instantly logs and caches deleted messages in current channel." },
+    { "name": "Auto-Reply", "category": "Automation", "description": "Trigger automated responses based on Regex matches in DMs." },
+    { "name": "Status Rotator", "category": "Automation", "description": "Cycles Rich Presence status every 60 seconds." },
+    { "name": "Reaction Spammer", "category": "Automation", "description": "Automatically react to all messages from specific user IDs." },
+    { "name": "Mass DM Cleaner", "category": "Utility", "description": "Bulk delete your own DM history with a specific user." },
+    { "name": "Server Clone", "category": "Utility", "description": "Scrape and replicate channel structure and roles." },
+    { "name": "Token Checker", "category": "Utility", "description": "Validate a list of alt tokens and fetch account details." },
+    { "name": "Invite Scraper", "category": "Utility", "description": "Extract all active invite links from current guild." },
+    { "name": "Text to Mock", "category": "Fun", "description": "aUtOmAtIcAlLy cOnVeRtS tExT lIkE tHiS bEfOrE sEnDiNg." },
+    { "name": "Ghost Ping", "category": "Fun", "description": "Pings a user and deletes the message within 100ms." },
+    { "name": "Fake Typing", "category": "Fun", "description": "Broadcasts typing indicator indefinitely without sending." },
+    { "name": "Nitro Spoof", "category": "Fun", "description": "Converts custom emoji shortcodes to image URLs." },
+    { "name": "Anti-Tracker", "category": "Privacy", "description": "Blocks outgoing read receipts and typing indicators locally." },
+    { "name": "Stealth Mode", "category": "Privacy", "description": "Hides mutual servers and appears offline while active." },
+    { "name": "Self-Destruct", "category": "Privacy", "description": "Automatically deletes your sent messages after 5 seconds." },
+    { "name": "Link Scanner", "category": "Privacy", "description": "Checks URLs against known IP grabber databases before opening." },
+    { "name": "Guild Member Tracker", "category": "Stats", "description": "Logs and charts joins/leaves in real-time." },
+    { "name": "Keyword Alerts", "category": "Stats", "description": "Notifies you globally if specific words are mentioned." },
+    { "name": "VC Time Logger", "category": "Stats", "description": "Tracks and charts your hours spent in Voice Channels." },
+    { "name": "Pings Analyzer", "category": "Stats", "description": "Generates a pie chart of users who ping you the most." }
+  ],
+  "instructions_to_main_agent": [
+    "This is a strictly STATIC UI mockup. No real API calls to Discord.",
+    "Use standard HTML/Tailwind for complex overlapping or grid components instead of Shadcn if Shadcn is too rigid, but use Shadcn for standard dropdowns/modals if needed.",
+    "Implement a Master Control Panel on top with a global connect/disconnect toggle, fake uptime counter, and latency (e.g., '14ms').",
+    "Implement the 'Terminal Feed' that auto-scrolls with fake data (e.g., '[14:02:03] [INFO] Loaded module: Sniper').",
+    "Display the 20 Function Ideas in a dense 'Bento' or 'Control Room' grid. Each card needs an ON/OFF toggle, Name, Category badge, and short description.",
+    "Include a 'cmd-k' style search bar mockup (doesn't need real logic, just UI).",
+    "Typography MUST strictly use Unbounded for headers and JetBrains Mono for body. Update `tailwind.config.js` to set these as sans/mono defaults or custom font families.",
+    "Background should be very dark (#050505), with scanlines CSS effect overlay to sell the 'terminal' vibe.",
+    "Provide intense contrast on active states using the neon green (#00FF41).",
+    "Ensure the layout is highly technical. Avoid generic SaaS centered layouts. Align left, use tight tracking on mono text, uppercase overlines."
+  ]
+}
