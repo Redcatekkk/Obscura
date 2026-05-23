@@ -5,7 +5,7 @@ use crate::simverse::Simverse;
 use serde::{Deserialize, Serialize};
 use sqlx::SqlitePool;
 use std::sync::Mutex;
-use tauri::State;
+use tauri::{AppHandle, Emitter, State};
 
 pub struct DeckState {
     pub pool: SqlitePool,
@@ -71,17 +71,14 @@ pub async fn modules_set_enabled(
 #[tauri::command]
 pub async fn modules_trigger_test(
     state: State<'_, DeckState>,
+    app: AppHandle,
     id: String,
 ) -> Result<LogLine, String> {
-    let log = LogLine {
-        ts: "14:03:00".to_string(),
-        level: crate::bus::LogLevel::Info,
-        source: format!("{id}.self-test"),
-        text: format!("triggered local test run for {id}"),
-    };
+    let log = module_test_log(&id);
     db::insert_log(&state.pool, &log)
         .await
         .map_err(|error| error.to_string())?;
+    emit_deck_log(&app, &log)?;
     Ok(log)
 }
 
@@ -136,9 +133,26 @@ async fn set_sim_intensity_inner(sim: &SimControl, intensity: u16) -> Result<Sim
     sim_status_inner(sim)
 }
 
+fn module_test_log(id: &str) -> LogLine {
+    LogLine {
+        ts: "14:03:00".to_string(),
+        level: crate::bus::LogLevel::Info,
+        source: format!("{id}.self-test"),
+        text: format!("triggered local test run for {id}"),
+    }
+}
+
+fn emit_deck_log(app: &AppHandle, log: &LogLine) -> Result<(), String> {
+    app.emit("deck:event", log.clone())
+        .map_err(|error| error.to_string())
+}
+
 #[cfg(test)]
 mod tests {
-    use super::{list_modules_inner, logs_recent_inner, set_sim_intensity_inner, sim_status_inner};
+    use super::{
+        list_modules_inner, logs_recent_inner, module_test_log, set_sim_intensity_inner,
+        sim_status_inner,
+    };
     use crate::db::{connect_memory, list_modules, set_module_enabled};
 
     #[tokio::test]
@@ -201,5 +215,14 @@ mod tests {
             .await
             .expect_err("out-of-range intensity should fail");
         assert!(error.contains("0..=100"));
+    }
+
+    #[test]
+    fn module_test_log_uses_tauri_event_payload_shape() {
+        let log = module_test_log("f01");
+        let json = serde_json::to_value(&log).expect("deck event should serialize");
+
+        assert_eq!(log.source, "f01.self-test");
+        assert_eq!(json["text"], "triggered local test run for f01");
     }
 }

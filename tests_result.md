@@ -168,6 +168,17 @@
 ##         -working: true
 ##         -agent: "main"
 ##         -comment: "Added SimControl state, sim_set_intensity command validation, frontend IPC wrapper, and an optimistic Engage/Disengage master button wired to intensity 50/0. Verified with focused Vitest/Rust tests, pnpm --filter @obscura/desktop typecheck, pnpm --filter @obscura/desktop test, cargo test --workspace --all-features, pnpm ci:frontend, and pnpm ci:rust after cargo fmt."
+##   - task: "M2 live deck event terminal feed"
+##     implemented: true
+##     working: true
+##     file: "apps/desktop/src/ipc/deck.ts"
+##     stuck_count: 0
+##     priority: "high"
+##     needs_retesting: false
+##     status_history:
+##         -working: true
+##         -agent: "main"
+##         -comment: "Added listenDeckEvents frontend wrapper, browser-test fallback, App terminal subscription, and Tauri deck:event emission from module self-test logs. Verified with focused red/green App and Rust tests, pnpm --filter @obscura/desktop typecheck, pnpm --filter @obscura/desktop test, cargo test --workspace --all-features, pnpm ci:frontend, and pnpm ci:rust."
 ## metadata:
 ##   created_by: "main_agent"
 ##   version: "1.0"
@@ -176,7 +187,7 @@
 ## test_plan:
 ##   current_focus:
 ##     - "M2 replace remaining static frontend module data"
-##     - "M2 live deck:event subscription"
+##     - "M2 persist module config commands"
 ##     - "M3 typed IPC generation"
 ##   stuck_tasks: []
 ##   test_all: false
@@ -194,3 +205,5 @@
 ##     -message: "M2 frontend module seed extraction is implemented and locally verified. Next focus is wiring MasterControl Engage/Disengage to a real sim_set_intensity command."
 ##     -agent: "main"
 ##     -message: "M2 master sim intensity command and frontend Engage/Disengage control are implemented and locally verified. Next focus is replacing remaining static frontend data and adding the live deck:event stream."
+##     -agent: "main"
+##     -message: "M2 live deck:event terminal feed is implemented and locally verified. Next focus is persisting module config commands and continuing to eliminate remaining static frontend data."

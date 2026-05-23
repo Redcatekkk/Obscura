@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import {
+  listenDeckEvents,
   logsRecent,
   modulesList,
   modulesSetEnabled,
@@ -119,6 +120,27 @@ export default function App() {
 
     return () => {
       mounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let unlisten: null | (() => void) = null;
+    let mounted = true;
+
+    void listenDeckEvents((line) => {
+      if (mounted) {
+        setLogs((current) => [line, ...current].slice(0, 12));
+      }
+    }).then((cleanup) => {
+      unlisten = cleanup;
+      if (!mounted) {
+        cleanup();
+      }
+    });
+
+    return () => {
+      mounted = false;
+      unlisten?.();
     };
   }, []);
 

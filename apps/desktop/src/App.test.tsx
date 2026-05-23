@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import App from "./App";
 
@@ -48,5 +48,26 @@ describe("App", () => {
 
     expect(engageButton).toHaveAttribute("aria-pressed", "false");
     expect(engageButton).toHaveTextContent("DISENGAGED");
+  });
+
+  it("appends deck events into the terminal feed", async () => {
+    render(<App />);
+
+    await screen.findByText(/simverse seed loaded/i);
+
+    window.dispatchEvent(
+      new CustomEvent("deck:event", {
+        detail: {
+          ts: "14:04:11",
+          level: "Info",
+          source: "f01.message_sniper",
+          text: "cached deleted message from scout"
+        }
+      })
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId("terminal-feed")).toHaveTextContent("cached deleted message from scout");
+    });
   });
 });
