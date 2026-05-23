@@ -191,8 +191,9 @@ mod tests {
     async fn modules_list_returns_reference_batch_without_state() {
         let modules = list_modules_inner(None).await.expect("modules should load");
 
-        assert_eq!(modules.len(), 5);
+        assert_eq!(modules.len(), 20);
         assert_eq!(modules[0].id, "f01");
+        assert_eq!(modules.last().map(|module| module.id), Some("f20"));
     }
 
     #[test]

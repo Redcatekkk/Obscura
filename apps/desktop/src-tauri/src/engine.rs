@@ -1,12 +1,32 @@
 use crate::bus::{LogLevel, LogLine, SimEvent};
 
 pub fn run_reference_modules(events: &[SimEvent]) -> Vec<LogLine> {
-    let mut logs = vec![LogLine {
-        ts: "14:02:00".to_string(),
-        level: LogLevel::Info,
-        source: "f03.status_rotator".to_string(),
-        text: "cycled simulated presence to OPERATOR_ACTIVE".to_string(),
-    }];
+    let mut logs = vec![
+        LogLine {
+            ts: "14:02:00".to_string(),
+            level: LogLevel::Info,
+            source: "f03.status_rotator".to_string(),
+            text: "cycled simulated presence to OPERATOR_ACTIVE".to_string(),
+        },
+        LogLine {
+            ts: "14:02:00".to_string(),
+            level: LogLevel::Info,
+            source: "f10.stealth_mode".to_string(),
+            text: "operator visibility hidden from mutuals".to_string(),
+        },
+        LogLine {
+            ts: "14:02:00".to_string(),
+            level: LogLevel::Info,
+            source: "f15.vc_time_logger".to_string(),
+            text: "voice-channel timers armed for simulated dwell tracking".to_string(),
+        },
+        LogLine {
+            ts: "14:02:00".to_string(),
+            level: LogLevel::Info,
+            source: "f20.theme_forge".to_string(),
+            text: "loaded preset chrome theme tokens".to_string(),
+        },
+    ];
 
     for event in events {
         match event {
@@ -33,13 +53,13 @@ pub fn run_reference_modules(events: &[SimEvent]) -> Vec<LogLine> {
             SimEvent::MemberJoin { guild, user } => logs.push(LogLine {
                 ts: "14:02:03".to_string(),
                 level: LogLevel::Warn,
-                source: "f17.stealth_mode".to_string(),
+                source: "f10.stealth_mode".to_string(),
                 text: format!("hid operator mutuals from {user} in {guild}"),
             }),
             SimEvent::VcJoin { channel, user } => logs.push(LogLine {
                 ts: "14:02:04".to_string(),
                 level: LogLevel::Info,
-                source: "f23.vc_time_logger".to_string(),
+                source: "f15.vc_time_logger".to_string(),
                 text: format!("started VC timer for {user} in {channel}"),
             }),
             SimEvent::RateLimit {
@@ -71,7 +91,8 @@ mod tests {
         assert!(sources.contains(&"f01.message_sniper"));
         assert!(sources.contains(&"f02.regex_auto_reply"));
         assert!(sources.contains(&"f03.status_rotator"));
-        assert!(sources.contains(&"f17.stealth_mode"));
-        assert!(sources.contains(&"f23.vc_time_logger"));
+        assert!(sources.contains(&"f10.stealth_mode"));
+        assert!(sources.contains(&"f15.vc_time_logger"));
+        assert!(sources.contains(&"f20.theme_forge"));
     }
 }

@@ -223,6 +223,17 @@
 ##         -working: true
 ##         -agent: "main"
 ##         -comment: "Added @obscura/ipc-types workspace package, generated-style command/type contract, frontend dependency and path mapping, IPC wrapper type imports/re-exports, and a Rust smoke test asserting the generated package exists. Verified with pnpm install, pnpm --filter @obscura/desktop typecheck, pnpm --filter @obscura/desktop test, cargo test --workspace --all-features, pnpm ci:frontend, and pnpm ci:rust."
+##   - task: "M4 backend visible module batch"
+##     implemented: true
+##     working: true
+##     file: "apps/desktop/src-tauri/src/modules.rs"
+##     stuck_count: 0
+##     priority: "high"
+##     needs_retesting: false
+##     status_history:
+##         -working: true
+##         -agent: "main"
+##         -comment: "Expanded the backend reference module table from 5 to the 20 visible modules, aligned f10/f15/f20 log sources, and updated DB/command tests to require the 20-module seed batch. Verified with focused failing-first Rust tests, pnpm --filter @obscura/desktop test, cargo test --workspace --all-features, pnpm ci:frontend, and pnpm ci:rust after cargo fmt."
 ## metadata:
 ##   created_by: "main_agent"
 ##   version: "1.0"
@@ -230,7 +241,7 @@
 ##   run_ui: false
 ## test_plan:
 ##   current_focus:
-##     - "M4 expand backend module coverage"
+##     - "M4 expand backend module coverage to 50"
 ##     - "M3 automate IPC type generation"
 ##   stuck_tasks: []
 ##   test_all: false
@@ -258,3 +269,5 @@
 ##     -message: "M2 live module list source-of-truth cleanup is implemented and locally verified. Next focus is typed IPC generation for M3."
 ##     -agent: "main"
 ##     -message: "M3 IPC types package scaffold is implemented and locally verified. Next focus is automating the generation step and expanding backend module coverage beyond the first reference batch."
+##     -agent: "main"
+##     -message: "M4 backend visible module batch is implemented and locally verified. Next focus is expanding toward all 50 modules and automating the IPC generation step."

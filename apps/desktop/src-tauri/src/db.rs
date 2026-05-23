@@ -231,8 +231,9 @@ mod tests {
         let pool = connect_memory().await.expect("db should initialize");
         let modules = list_modules(&pool).await.expect("modules should load");
 
-        assert_eq!(modules.len(), 5);
+        assert_eq!(modules.len(), 20);
         assert_eq!(modules[0].id, "f01");
+        assert_eq!(modules.last().map(|module| module.id), Some("f20"));
     }
 
     #[tokio::test]
@@ -253,7 +254,7 @@ mod tests {
             .expect("seed should be idempotent");
         let modules = list_modules(&pool).await.expect("modules should load");
 
-        assert_eq!(modules.len(), 5);
+        assert_eq!(modules.len(), 20);
     }
 
     #[tokio::test]
