@@ -146,6 +146,17 @@
 ##         -working: true
 ##         -agent: "main"
 ##         -comment: "Added modules_set_enabled and modules_trigger_test commands, optimistic UI toggles, backend-persisted test log insertion, and a component test for module toggling. Verified with pnpm ci:frontend and pnpm ci:rust."
+##   - task: "M2 frontend module seed extraction"
+##     implemented: true
+##     working: true
+##     file: "apps/desktop/src/data/functions.ts"
+##     stuck_count: 0
+##     priority: "medium"
+##     needs_retesting: false
+##     status_history:
+##         -working: true
+##         -agent: "main"
+##         -comment: "Moved the visible module seed table and category helpers out of App.tsx into src/data/functions.ts with focused Vitest coverage. Verified with pnpm --filter @obscura/desktop typecheck, pnpm --filter @obscura/desktop test, cargo test --workspace --all-features, pnpm ci:frontend, and pnpm ci:rust."
 ## metadata:
 ##   created_by: "main_agent"
 ##   version: "1.0"
@@ -153,6 +164,7 @@
 ##   run_ui: false
 ## test_plan:
 ##   current_focus:
+##     - "M2 wire master sim intensity command"
 ##     - "M2 replace remaining static frontend module data"
 ##     - "M3 typed IPC generation"
 ##   stuck_tasks: []
@@ -167,3 +179,5 @@
 ##     -message: "M2 backend bus/db/simverse foundation implemented and verified. Continue with log/render integration and deeper module coverage."
 ##     -agent: "main"
 ##     -message: "M2 module enable/disable and trigger flow implemented and verified. Continue replacing remaining static frontend data and preparing typed IPC generation."
+##     -agent: "main"
+##     -message: "M2 frontend module seed extraction is implemented and locally verified. Next focus is wiring MasterControl Engage/Disengage to a real sim_set_intensity command."
