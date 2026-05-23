@@ -1,3 +1,10 @@
+pub mod bus;
+pub mod commands;
+pub mod db;
+pub mod engine;
+pub mod modules;
+pub mod simverse;
+
 pub fn app_name() -> &'static str {
     "obscura.deck"
 }

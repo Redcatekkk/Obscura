@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Activity,
   Bell,
@@ -17,6 +17,7 @@ import {
   Zap
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { modulesList, simStatus, type ModuleSummary } from "./ipc/deck";
 
 type Category = "Automation" | "Utility" | "Privacy" | "Stats" | "Fun";
 
@@ -96,10 +97,12 @@ export default function App() {
   const [activeCategory, setActiveCategory] = useState<Category | "All">("All");
   const [query, setQuery] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
+  const [modules, setModules] = useState<DeckFunction[]>(deckFunctions);
+  const [simSeed, setSimSeed] = useState<number | null>(null);
 
   const filteredFunctions = useMemo(() => {
     const normalized = query.trim().toLowerCase();
-    return deckFunctions.filter((item) => {
+    return modules.filter((item) => {
       const categoryMatch = activeCategory === "All" || item.category === activeCategory;
       const queryMatch =
         normalized.length === 0 ||
@@ -108,7 +111,35 @@ export default function App() {
         item.category.toLowerCase().includes(normalized);
       return categoryMatch && queryMatch;
     });
-  }, [activeCategory, query]);
+  }, [activeCategory, modules, query]);
+
+  useEffect(() => {
+    let mounted = true;
+
+    void modulesList().then((items: ModuleSummary[]) => {
+      if (!mounted || items.length === 0) {
+        return;
+      }
+
+      setModules(
+        items.map((item) => ({
+          ...item,
+          category: item.category,
+          enabled: item.enabled
+        }))
+      );
+    });
+
+    void simStatus().then((status) => {
+      if (mounted && status) {
+        setSimSeed(status.seed);
+      }
+    });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   return (
     <main className="app-shell" aria-label="obscura deck workspace" data-testid="app-shell">
@@ -139,8 +170,8 @@ export default function App() {
       <section className="deck-canvas">
         <header className="topbar" data-testid="master-control">
           <div>
-            <p className="overline">MASTER CONTROL / LOCAL SIMVERSE</p>
-            <h2>Operator deck armed for dry-run telemetry.</h2>
+              <p className="overline">MASTER CONTROL / LOCAL SIMVERSE</p>
+            <h2>Operator deck armed for dry-run telemetry{simSeed !== null ? ` / seed ${simSeed}` : ""}.</h2>
           </div>
           <div className="command-row">
             <label className="search-box" data-testid="search-box">

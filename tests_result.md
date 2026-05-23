@@ -129,6 +129,17 @@
 ##         -working: true
 ##         -agent: "main"
 ##         -comment: "Implemented static cyber-terminal control deck with master control, sidebar disclaimer, function library, terminal feed, KPI row, category filters, local search, and f01 config modal. Verified with pnpm ci:frontend and pnpm ci:rust."
+##   - task: "M2 backend bus/db/simverse core"
+##     implemented: true
+##     working: true
+##     file: "apps/desktop/src-tauri/src/lib.rs"
+##     stuck_count: 0
+##     priority: "high"
+##     needs_retesting: false
+##     status_history:
+##         -working: true
+##         -agent: "main"
+##         -comment: "Added typed DeckEvent bus, deterministic Simverse sample generator, five reference module summaries, SQLite repo helpers, Tauri commands, and a UI IPC wrapper with Tauri/browser fallback. Verified with pnpm ci:frontend and pnpm ci:rust."
 ## metadata:
 ##   created_by: "main_agent"
 ##   version: "1.0"
@@ -137,6 +148,7 @@
 ## test_plan:
 ##   current_focus:
 ##     - "M2 backend bus and simverse foundation"
+##     - "M2 log/render integration"
 ##   stuck_tasks: []
 ##   test_all: false
 ##   test_priority: "high_first"
@@ -145,3 +157,5 @@
 ##     -message: "M0 is committed and stable. Starting M1 static UI work next, with the test-result tracker updated first per repo protocol."
 ##     -agent: "main"
 ##     -message: "M1 static UI shell implemented and locally verified. Next milestone should start replacing static data with backend bus/simverse flows."
+##     -agent: "main"
+##     -message: "M2 backend bus/db/simverse foundation implemented and verified. Continue with log/render integration and deeper module coverage."
