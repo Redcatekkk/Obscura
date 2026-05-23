@@ -1,4 +1,11 @@
-// Generated IPC contract for obscura.deck.
+import { readFileSync, writeFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { dirname, join } from "node:path";
+
+const root = join(dirname(fileURLToPath(import.meta.url)), "..");
+const target = join(root, "packages", "ipc-types", "src", "index.ts");
+
+const contents = `// Generated IPC contract for obscura.deck.
 // Source: scripts/generate-ipc-types.mjs.
 
 export type DeckCategory = "Automation" | "Utility" | "Privacy" | "Stats" | "Fun";
@@ -69,3 +76,15 @@ export type Commands = {
     result: SimStatus;
   };
 };
+`;
+
+if (process.argv.includes("--check")) {
+  const current = readFileSync(target, "utf8");
+  if (current !== contents) {
+    console.error("Generated IPC types are out of date. Run `pnpm generate:ipc-types`.");
+    process.exit(1);
+  }
+  console.log("Generated IPC types are up to date.");
+} else {
+  writeFileSync(target, contents);
+}

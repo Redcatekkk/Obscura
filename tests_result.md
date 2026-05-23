@@ -245,6 +245,17 @@
 ##         -working: true
 ##         -agent: "main"
 ##         -comment: "Expanded both the frontend seed catalog and backend module reference table from 20 to the full 50-module set, while keeping the simulation-only boundary and updating associated tests to pin f01..f50. Verified with failing-first Rust and Vitest tests, pnpm --filter @obscura/desktop typecheck, pnpm --filter @obscura/desktop test, cargo test --workspace --all-features, pnpm ci:frontend, and pnpm ci:rust."
+##   - task: "M3 IPC type generation drift check"
+##     implemented: true
+##     working: true
+##     file: "scripts/generate-ipc-types.mjs"
+##     stuck_count: 0
+##     priority: "high"
+##     needs_retesting: false
+##     status_history:
+##         -working: true
+##         -agent: "main"
+##         -comment: "Added deterministic generate/check script for @obscura/ipc-types, refreshed the generated index, and wired pnpm ci:frontend to fail on IPC type drift. Verified with pnpm check:ipc-types, pnpm --filter @obscura/desktop typecheck, pnpm --filter @obscura/desktop test, cargo test --workspace --all-features, pnpm ci:frontend, and pnpm ci:rust."
 ## metadata:
 ##   created_by: "main_agent"
 ##   version: "1.0"
@@ -252,7 +263,8 @@
 ##   run_ui: false
 ## test_plan:
 ##   current_focus:
-##     - "M3 automate IPC type generation"
+##     - "M4 per-module observable behavior for all 50"
+##     - "M5 settings sync and snapshot export"
 ##   stuck_tasks: []
 ##   test_all: false
 ##   test_priority: "high_first"
@@ -283,3 +295,5 @@
 ##     -message: "M4 backend visible module batch is implemented and locally verified. Next focus is expanding toward all 50 modules and automating the IPC generation step."
 ##     -agent: "main"
 ##     -message: "M4 full 50-module catalog is implemented and locally verified. Next focus is automating IPC type generation to replace the manual package scaffold."
+##     -agent: "main"
+##     -message: "M3 IPC type generation drift check is implemented and locally verified. Next focus is making all 50 modules observable in syslog and then building settings sync/snapshot export."
