@@ -201,6 +201,17 @@
 ##         -working: true
 ##         -agent: "main"
 ##         -comment: "Replaced the static KPI constants with values derived from loaded module state, sim status, log count, and deterministic seed. Verified with a failing-first App test, pnpm --filter @obscura/desktop typecheck, pnpm --filter @obscura/desktop test, cargo test --workspace --all-features, pnpm ci:frontend, and pnpm ci:rust."
+##   - task: "M2 live module list source of truth"
+##     implemented: true
+##     working: true
+##     file: "apps/desktop/src/ipc/deck.ts"
+##     stuck_count: 0
+##     priority: "medium"
+##     needs_retesting: false
+##     status_history:
+##         -working: true
+##         -agent: "main"
+##         -comment: "Removed App.tsx's direct seed-table dependency and shifted the browser fallback into the IPC layer so the visible library is sourced through the same wrapper as Tauri. Updated the library label from Static module matrix to Live module matrix and verified with a failing-first App test plus pnpm --filter @obscura/desktop typecheck, pnpm --filter @obscura/desktop test, cargo test --workspace --all-features, pnpm ci:frontend, and pnpm ci:rust."
 ## metadata:
 ##   created_by: "main_agent"
 ##   version: "1.0"
@@ -208,7 +219,6 @@
 ##   run_ui: false
 ## test_plan:
 ##   current_focus:
-##     - "M2 replace remaining static frontend module data"
 ##     - "M3 typed IPC generation"
 ##   stuck_tasks: []
 ##   test_all: false
@@ -232,3 +242,5 @@
 ##     -message: "M2 module config persistence commands and editable f01 config modal are implemented and locally verified. Next focus is deriving the KPI row from live module/sim/log data and continuing toward typed IPC generation."
 ##     -agent: "main"
 ##     -message: "M2 live KPI row derivation is implemented and locally verified. Next focus is removing duplicate/static frontend data sources and preparing typed IPC generation."
+##     -agent: "main"
+##     -message: "M2 live module list source-of-truth cleanup is implemented and locally verified. Next focus is typed IPC generation for M3."

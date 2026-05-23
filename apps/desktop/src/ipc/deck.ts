@@ -1,3 +1,5 @@
+import { deckFunctions } from "../data/functions";
+
 export type DeckCategory = "Automation" | "Utility" | "Privacy" | "Stats" | "Fun";
 
 export type ModuleSummary = {
@@ -35,7 +37,7 @@ export type ModuleConfig = {
 export async function modulesList(): Promise<ModuleSummary[]> {
   const tauri = await resolveTauriCore();
   if (!tauri) {
-    return [];
+    return deckFunctions;
   }
 
   return tauri.invoke<ModuleSummary[]>("modules_list");

@@ -38,6 +38,15 @@ describe("App", () => {
     expect(screen.getByTestId("config-modal")).toHaveTextContent("Message Sniper");
   });
 
+  it("labels the module matrix as live data", async () => {
+    render(<App />);
+
+    await screen.findByTestId("function-card-f01");
+
+    expect(screen.getByTestId("function-library")).toHaveTextContent("Live module matrix");
+    expect(screen.getByTestId("function-library")).not.toHaveTextContent("Static module matrix");
+  });
+
   it("edits module config fields in the modal", async () => {
     render(<App />);
 

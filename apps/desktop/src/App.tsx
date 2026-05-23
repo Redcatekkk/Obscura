@@ -33,7 +33,6 @@ import {
 } from "./ipc/deck";
 import {
   categories,
-  deckFunctions,
   type Category,
   type DeckFunction
 } from "./data/functions";
@@ -73,7 +72,7 @@ export default function App() {
   const [activeCategory, setActiveCategory] = useState<Category | "All">("All");
   const [query, setQuery] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
-  const [modules, setModules] = useState<DeckFunction[]>(deckFunctions);
+  const [modules, setModules] = useState<DeckFunction[]>([]);
   const [simSeed, setSimSeed] = useState<number | null>(null);
   const [simIntensity, setSimIntensity] = useState(50);
   const [simEventCount, setSimEventCount] = useState(0);
@@ -107,7 +106,7 @@ export default function App() {
     let mounted = true;
 
     void modulesList().then((items: ModuleSummary[]) => {
-      if (!mounted || items.length === 0) {
+      if (!mounted) {
         return;
       }
 
@@ -308,7 +307,7 @@ export default function App() {
             <div className="section-heading">
               <div>
                 <p className="overline">FUNCTION LIBRARY</p>
-                <h3>Static module matrix</h3>
+                <h3>Live module matrix</h3>
               </div>
               <button className="ghost-button" onClick={() => setModalOpen(true)} type="button" data-testid="open-config">
                 <SlidersHorizontal size={16} />
