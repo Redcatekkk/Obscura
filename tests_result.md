@@ -179,6 +179,17 @@
 ##         -working: true
 ##         -agent: "main"
 ##         -comment: "Added listenDeckEvents frontend wrapper, browser-test fallback, App terminal subscription, and Tauri deck:event emission from module self-test logs. Verified with focused red/green App and Rust tests, pnpm --filter @obscura/desktop typecheck, pnpm --filter @obscura/desktop test, cargo test --workspace --all-features, pnpm ci:frontend, and pnpm ci:rust."
+##   - task: "M2 module config persistence commands"
+##     implemented: true
+##     working: true
+##     file: "apps/desktop/src-tauri/src/db.rs"
+##     stuck_count: 0
+##     priority: "high"
+##     needs_retesting: false
+##     status_history:
+##         -working: true
+##         -agent: "main"
+##         -comment: "Added SQLite module config storage, get/set repository helpers, modules_get_config/modules_set_config Tauri commands, frontend IPC wrappers, and an editable f01 config modal. Verified with focused DB/command/App tests, pnpm --filter @obscura/desktop typecheck, pnpm --filter @obscura/desktop test, cargo test --workspace --all-features, pnpm ci:frontend, and pnpm ci:rust after cargo fmt."
 ## metadata:
 ##   created_by: "main_agent"
 ##   version: "1.0"
@@ -187,7 +198,7 @@
 ## test_plan:
 ##   current_focus:
 ##     - "M2 replace remaining static frontend module data"
-##     - "M2 persist module config commands"
+##     - "M2 derive live KPI row"
 ##     - "M3 typed IPC generation"
 ##   stuck_tasks: []
 ##   test_all: false
@@ -207,3 +218,5 @@
 ##     -message: "M2 master sim intensity command and frontend Engage/Disengage control are implemented and locally verified. Next focus is replacing remaining static frontend data and adding the live deck:event stream."
 ##     -agent: "main"
 ##     -message: "M2 live deck:event terminal feed is implemented and locally verified. Next focus is persisting module config commands and continuing to eliminate remaining static frontend data."
+##     -agent: "main"
+##     -message: "M2 module config persistence commands and editable f01 config modal are implemented and locally verified. Next focus is deriving the KPI row from live module/sim/log data and continuing toward typed IPC generation."

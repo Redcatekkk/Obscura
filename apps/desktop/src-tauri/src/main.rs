@@ -10,6 +10,8 @@ fn main() {
         .manage(sim_control)
         .invoke_handler(tauri::generate_handler![
             obscura_deck::commands::modules_list,
+            obscura_deck::commands::modules_get_config,
+            obscura_deck::commands::modules_set_config,
             obscura_deck::commands::modules_set_enabled,
             obscura_deck::commands::modules_trigger_test,
             obscura_deck::commands::logs_recent,

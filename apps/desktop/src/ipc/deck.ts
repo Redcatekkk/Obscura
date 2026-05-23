@@ -25,6 +25,13 @@ export type LogLine = {
 
 export type DeckEventPayload = LogLine;
 
+export type ModuleConfig = {
+  capture_window_minutes?: number;
+  channel_scope?: string;
+  storage_mode?: string;
+  redaction?: boolean;
+};
+
 export async function modulesList(): Promise<ModuleSummary[]> {
   const tauri = await resolveTauriCore();
   if (!tauri) {
@@ -68,6 +75,24 @@ export async function modulesSetEnabled(id: string, enabled: boolean): Promise<v
   }
 
   await tauri.invoke<void>("modules_set_enabled", { id, enabled });
+}
+
+export async function modulesGetConfig(id: string): Promise<ModuleConfig> {
+  const tauri = await resolveTauriCore();
+  if (!tauri) {
+    return {};
+  }
+
+  return tauri.invoke<ModuleConfig>("modules_get_config", { id });
+}
+
+export async function modulesSetConfig(id: string, config: ModuleConfig): Promise<ModuleConfig> {
+  const tauri = await resolveTauriCore();
+  if (!tauri) {
+    return config;
+  }
+
+  return tauri.invoke<ModuleConfig>("modules_set_config", { id, config });
 }
 
 export async function modulesTriggerTest(id: string): Promise<LogLine | null> {

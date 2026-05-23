@@ -20,12 +20,15 @@ import type { LucideIcon } from "lucide-react";
 import {
   listenDeckEvents,
   logsRecent,
+  modulesGetConfig,
   modulesList,
+  modulesSetConfig,
   modulesSetEnabled,
   modulesTriggerTest,
   simSetIntensity,
   simStatus,
   type LogLine,
+  type ModuleConfig,
   type ModuleSummary
 } from "./ipc/deck";
 import {
@@ -51,6 +54,13 @@ const kpis = [
   { label: "Uptime", value: "03:42:19", detail: "operator session" }
 ];
 
+const defaultModuleConfig: Required<ModuleConfig> = {
+  capture_window_minutes: 10,
+  channel_scope: "simverse.guild.*",
+  storage_mode: "local sqlite queue",
+  redaction: true
+};
+
 function Toggle({ enabled, label, onToggle }: { enabled: boolean; label: string; onToggle: () => void }) {
   return (
     <button
@@ -74,6 +84,7 @@ export default function App() {
   const [simSeed, setSimSeed] = useState<number | null>(null);
   const [simIntensity, setSimIntensity] = useState(50);
   const [logs, setLogs] = useState<LogLine[]>([]);
+  const [moduleConfig, setModuleConfig] = useState<Required<ModuleConfig>>(defaultModuleConfig);
 
   const filteredFunctions = useMemo(() => {
     const normalized = query.trim().toLowerCase();
@@ -124,6 +135,23 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    if (!modalOpen) {
+      return;
+    }
+
+    let mounted = true;
+    void modulesGetConfig("f01").then((config) => {
+      if (mounted) {
+        setModuleConfig({ ...defaultModuleConfig, ...config });
+      }
+    });
+
+    return () => {
+      mounted = false;
+    };
+  }, [modalOpen]);
+
+  useEffect(() => {
     let unlisten: null | (() => void) = null;
     let mounted = true;
 
@@ -167,6 +195,20 @@ export default function App() {
         setSimIntensity(status.intensity);
         setSimSeed(status.seed);
       }
+    });
+  }
+
+  function updateModuleConfig<K extends keyof Required<ModuleConfig>>(
+    key: K,
+    value: Required<ModuleConfig>[K]
+  ) {
+    setModuleConfig((current) => ({ ...current, [key]: value }));
+  }
+
+  function applyModuleConfig() {
+    void modulesSetConfig("f01", moduleConfig).then((saved) => {
+      setModuleConfig({ ...defaultModuleConfig, ...saved });
+      setModalOpen(false);
     });
   }
 
@@ -375,26 +417,47 @@ export default function App() {
             <div className="modal-grid">
               <label>
                 Capture window
-                <input readOnly value="10 minutes" />
+                <input
+                  aria-label="Capture window"
+                  min={1}
+                  onChange={(event) =>
+                    updateModuleConfig("capture_window_minutes", Number(event.target.value))
+                  }
+                  type="number"
+                  value={moduleConfig.capture_window_minutes}
+                />
               </label>
               <label>
                 Channel scope
-                <input readOnly value="simverse.guild.*" />
+                <input
+                  aria-label="Channel scope"
+                  onChange={(event) => updateModuleConfig("channel_scope", event.target.value)}
+                  value={moduleConfig.channel_scope}
+                />
               </label>
               <label>
                 Storage mode
-                <input readOnly value="local sqlite queue" />
+                <input
+                  aria-label="Storage mode"
+                  onChange={(event) => updateModuleConfig("storage_mode", event.target.value)}
+                  value={moduleConfig.storage_mode}
+                />
               </label>
               <label>
                 Redaction
-                <input readOnly value="enabled" />
+                <input
+                  aria-label="Redaction"
+                  onChange={(event) => updateModuleConfig("redaction", event.target.checked)}
+                  type="checkbox"
+                  checked={moduleConfig.redaction}
+                />
               </label>
             </div>
             <div className="modal-actions">
               <button className="ghost-button" onClick={() => setModalOpen(false)} type="button">
                 Cancel
               </button>
-              <button className="engage-button" onClick={() => setModalOpen(false)} type="button">
+              <button className="engage-button" onClick={applyModuleConfig} type="button">
                 Apply
               </button>
             </div>

@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS modules (
     category TEXT NOT NULL,
     description TEXT NOT NULL,
     enabled INTEGER NOT NULL DEFAULT 0,
+    config TEXT NOT NULL DEFAULT '{}',
     updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 

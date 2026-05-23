@@ -2,6 +2,7 @@ use crate::bus::{LogLevel, LogLine};
 use crate::engine::run_reference_modules;
 use crate::modules::{Category, ModuleSummary};
 use crate::simverse::Simverse;
+use serde_json::Value;
 use sqlx::{sqlite::SqlitePoolOptions, Row, SqlitePool};
 
 type DbResult<T> = Result<T, Box<dyn std::error::Error + Send + Sync>>;
@@ -35,13 +36,14 @@ pub async fn seed_modules(pool: &SqlitePool) -> Result<(), sqlx::Error> {
     for module in crate::modules::reference_modules() {
         sqlx::query(
             r#"
-            INSERT INTO modules (id, name, category, description, enabled)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO modules (id, name, category, description, enabled, config)
+            VALUES (?, ?, ?, ?, ?, ?)
             ON CONFLICT(id) DO UPDATE SET
                 name = excluded.name,
                 category = excluded.category,
                 description = excluded.description,
                 enabled = excluded.enabled,
+                config = modules.config,
                 updated_at = CURRENT_TIMESTAMP
             "#,
         )
@@ -50,6 +52,7 @@ pub async fn seed_modules(pool: &SqlitePool) -> Result<(), sqlx::Error> {
         .bind(category_name(module.category))
         .bind(module.description)
         .bind(module.enabled)
+        .bind("{}")
         .execute(pool)
         .await?;
     }
@@ -98,6 +101,42 @@ pub async fn list_modules(pool: &SqlitePool) -> Result<Vec<ModuleSummary>, sqlx:
             enabled: row.get::<i64, _>("enabled") != 0,
         })
         .collect())
+}
+
+pub async fn get_module_config(pool: &SqlitePool, id: &str) -> Result<Value, sqlx::Error> {
+    let row = sqlx::query(
+        r#"
+        SELECT config
+        FROM modules
+        WHERE id = ?
+        "#,
+    )
+    .bind(id)
+    .fetch_one(pool)
+    .await?;
+
+    let config = row.get::<String, _>("config");
+    Ok(serde_json::from_str(&config).unwrap_or_else(|_| serde_json::json!({})))
+}
+
+pub async fn set_module_config(
+    pool: &SqlitePool,
+    id: &str,
+    config: &Value,
+) -> Result<(), sqlx::Error> {
+    sqlx::query(
+        r#"
+        UPDATE modules
+        SET config = ?, updated_at = CURRENT_TIMESTAMP
+        WHERE id = ?
+        "#,
+    )
+    .bind(config.to_string())
+    .bind(id)
+    .execute(pool)
+    .await?;
+
+    Ok(())
 }
 
 pub async fn insert_log(pool: &SqlitePool, log: &LogLine) -> Result<(), sqlx::Error> {
@@ -181,7 +220,10 @@ fn parse_log_level(value: &str) -> LogLevel {
 
 #[cfg(test)]
 mod tests {
-    use super::{connect_memory, insert_log, list_modules, recent_logs, seed_modules};
+    use super::{
+        connect_memory, get_module_config, insert_log, list_modules, recent_logs, seed_modules,
+        set_module_config,
+    };
     use crate::{engine::run_reference_modules, simverse::Simverse};
 
     #[tokio::test]
@@ -191,6 +233,16 @@ mod tests {
 
         assert_eq!(modules.len(), 5);
         assert_eq!(modules[0].id, "f01");
+    }
+
+    #[tokio::test]
+    async fn seeded_module_config_defaults_to_empty_object() {
+        let pool = connect_memory().await.expect("db should initialize");
+        let config = get_module_config(&pool, "f01")
+            .await
+            .expect("config should load");
+
+        assert_eq!(config, serde_json::json!({}));
     }
 
     #[tokio::test]
@@ -220,5 +272,28 @@ mod tests {
 
         assert_eq!(stored.len(), before + logs.len());
         assert!(stored.iter().any(|log| log.source == "f01.message_sniper"));
+    }
+
+    #[tokio::test]
+    async fn module_config_round_trips_through_sqlite() {
+        let pool = connect_memory().await.expect("db should initialize");
+
+        let initial = get_module_config(&pool, "f01")
+            .await
+            .expect("config should load");
+        assert_eq!(initial, serde_json::json!({}));
+
+        let next = serde_json::json!({
+            "capture_window_minutes": 15,
+            "channel_scope": "simverse.guild.*"
+        });
+        set_module_config(&pool, "f01", &next)
+            .await
+            .expect("config should persist");
+
+        let stored = get_module_config(&pool, "f01")
+            .await
+            .expect("config should reload");
+        assert_eq!(stored, next);
     }
 }

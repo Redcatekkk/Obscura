@@ -26,6 +26,24 @@ describe("App", () => {
     expect(screen.getByTestId("config-modal")).toHaveTextContent("Message Sniper");
   });
 
+  it("edits module config fields in the modal", async () => {
+    render(<App />);
+
+    await screen.findByTestId("function-card-f01");
+    fireEvent.click(screen.getByTestId("open-config"));
+
+    const captureWindow = screen.getByLabelText("Capture window");
+    fireEvent.change(captureWindow, { target: { value: "25" } });
+
+    expect(captureWindow).toHaveValue(25);
+
+    fireEvent.click(screen.getByText("Apply"));
+
+    await waitFor(() => {
+      expect(screen.queryByTestId("config-modal")).not.toBeInTheDocument();
+    });
+  });
+
   it("optimistically toggles module state", async () => {
     render(<App />);
 

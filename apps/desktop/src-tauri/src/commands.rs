@@ -3,6 +3,7 @@ use crate::db;
 use crate::modules::{reference_modules, ModuleSummary};
 use crate::simverse::Simverse;
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
 use sqlx::SqlitePool;
 use std::sync::Mutex;
 use tauri::{AppHandle, Emitter, State};
@@ -69,6 +70,20 @@ pub async fn modules_set_enabled(
 }
 
 #[tauri::command]
+pub async fn modules_get_config(state: State<'_, DeckState>, id: String) -> Result<Value, String> {
+    modules_get_config_inner(&state.pool, &id).await
+}
+
+#[tauri::command]
+pub async fn modules_set_config(
+    state: State<'_, DeckState>,
+    id: String,
+    config: Value,
+) -> Result<Value, String> {
+    modules_set_config_inner(&state.pool, &id, config).await
+}
+
+#[tauri::command]
 pub async fn modules_trigger_test(
     state: State<'_, DeckState>,
     app: AppHandle,
@@ -106,6 +121,23 @@ async fn logs_recent_inner(
     Ok(crate::engine::run_reference_modules(
         &Simverse::new(42).sample_events(),
     ))
+}
+
+async fn modules_get_config_inner(pool: &SqlitePool, id: &str) -> Result<Value, String> {
+    db::get_module_config(pool, id)
+        .await
+        .map_err(|error| error.to_string())
+}
+
+async fn modules_set_config_inner(
+    pool: &SqlitePool,
+    id: &str,
+    config: Value,
+) -> Result<Value, String> {
+    db::set_module_config(pool, id, &config)
+        .await
+        .map_err(|error| error.to_string())?;
+    modules_get_config_inner(pool, id).await
 }
 
 fn sim_status_inner(sim: &SimControl) -> Result<SimStatus, String> {
@@ -150,8 +182,8 @@ fn emit_deck_log(app: &AppHandle, log: &LogLine) -> Result<(), String> {
 #[cfg(test)]
 mod tests {
     use super::{
-        list_modules_inner, logs_recent_inner, module_test_log, set_sim_intensity_inner,
-        sim_status_inner,
+        list_modules_inner, logs_recent_inner, module_test_log, modules_get_config_inner,
+        modules_set_config_inner, set_sim_intensity_inner, sim_status_inner,
     };
     use crate::db::{connect_memory, list_modules, set_module_enabled};
 
@@ -224,5 +256,24 @@ mod tests {
 
         assert_eq!(log.source, "f01.self-test");
         assert_eq!(json["text"], "triggered local test run for f01");
+    }
+
+    #[tokio::test]
+    async fn module_config_commands_round_trip_json() {
+        let pool = connect_memory().await.expect("db should initialize");
+        let config = serde_json::json!({
+            "capture_window_minutes": 20,
+            "redaction": true
+        });
+
+        let stored = modules_set_config_inner(&pool, "f01", config.clone())
+            .await
+            .expect("config should persist");
+        assert_eq!(stored, config);
+
+        let reloaded = modules_get_config_inner(&pool, "f01")
+            .await
+            .expect("config should load");
+        assert_eq!(reloaded, config);
     }
 }
