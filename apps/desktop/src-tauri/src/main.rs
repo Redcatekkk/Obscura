@@ -8,6 +8,8 @@ fn main() {
         .manage(obscura_deck::commands::DeckState { pool })
         .invoke_handler(tauri::generate_handler![
             obscura_deck::commands::modules_list,
+            obscura_deck::commands::modules_set_enabled,
+            obscura_deck::commands::modules_trigger_test,
             obscura_deck::commands::logs_recent,
             obscura_deck::commands::sim_status
         ])

@@ -17,7 +17,15 @@ import {
   Zap
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { logsRecent, modulesList, simStatus, type LogLine, type ModuleSummary } from "./ipc/deck";
+import {
+  logsRecent,
+  modulesList,
+  modulesSetEnabled,
+  modulesTriggerTest,
+  simStatus,
+  type LogLine,
+  type ModuleSummary
+} from "./ipc/deck";
 
 type Category = "Automation" | "Utility" | "Privacy" | "Stats" | "Fun";
 
@@ -70,11 +78,12 @@ const kpis = [
   { label: "Uptime", value: "03:42:19", detail: "operator session" }
 ];
 
-function Toggle({ enabled, label }: { enabled: boolean; label: string }) {
+function Toggle({ enabled, label, onToggle }: { enabled: boolean; label: string; onToggle: () => void }) {
   return (
     <button
       className={`toggle ${enabled ? "is-on" : ""}`}
       type="button"
+      onClick={onToggle}
       aria-pressed={enabled}
       aria-label={`${label} ${enabled ? "enabled" : "disabled"}`}
       data-testid={`toggle-${label.toLowerCase().replace(/\s+/g, "-")}`}
@@ -138,6 +147,21 @@ export default function App() {
       mounted = false;
     };
   }, []);
+
+  function toggleModule(id: string, enabled: boolean) {
+    setModules((current) =>
+      current.map((module) => (module.id === id ? { ...module, enabled: !enabled } : module))
+    );
+    void modulesSetEnabled(id, !enabled);
+  }
+
+  function triggerModuleTest(id: string) {
+    void modulesTriggerTest(id).then((line) => {
+      if (line) {
+        setLogs((current) => [line, ...current].slice(0, 12));
+      }
+    });
+  }
 
   return (
     <main className="app-shell" aria-label="obscura deck workspace" data-testid="app-shell">
@@ -256,7 +280,10 @@ export default function App() {
                   <p>{item.description}</p>
                   <div className="card-footer">
                     <span>{item.enabled ? "ACTIVE BUS" : "STANDBY"}</span>
-                    <Toggle enabled={item.enabled} label={item.name} />
+                    <button className="test-button" onClick={() => triggerModuleTest(item.id)} type="button">
+                      TEST
+                    </button>
+                    <Toggle enabled={item.enabled} label={item.name} onToggle={() => toggleModule(item.id, item.enabled)} />
                   </div>
                 </article>
               ))}

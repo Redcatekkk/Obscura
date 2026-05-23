@@ -57,6 +57,26 @@ pub async fn seed_modules(pool: &SqlitePool) -> Result<(), sqlx::Error> {
     Ok(())
 }
 
+pub async fn set_module_enabled(
+    pool: &SqlitePool,
+    id: &str,
+    enabled: bool,
+) -> Result<(), sqlx::Error> {
+    sqlx::query(
+        r#"
+        UPDATE modules
+        SET enabled = ?, updated_at = CURRENT_TIMESTAMP
+        WHERE id = ?
+        "#,
+    )
+    .bind(enabled)
+    .bind(id)
+    .execute(pool)
+    .await?;
+
+    Ok(())
+}
+
 pub async fn list_modules(pool: &SqlitePool) -> Result<Vec<ModuleSummary>, sqlx::Error> {
     let rows = sqlx::query(
         r#"

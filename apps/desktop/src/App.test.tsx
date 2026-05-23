@@ -25,4 +25,14 @@ describe("App", () => {
 
     expect(screen.getByTestId("config-modal")).toHaveTextContent("Message Sniper");
   });
+
+  it("optimistically toggles module state", async () => {
+    render(<App />);
+
+    const toggle = await screen.findByTestId("toggle-message-sniper");
+
+    expect(toggle).toHaveAttribute("aria-pressed", "true");
+    fireEvent.click(toggle);
+    expect(toggle).toHaveAttribute("aria-pressed", "false");
+  });
 });

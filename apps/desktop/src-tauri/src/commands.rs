@@ -40,6 +40,34 @@ pub async fn logs_recent(
     logs_recent_inner(Some(&state.pool), limit).await
 }
 
+#[tauri::command]
+pub async fn modules_set_enabled(
+    state: State<'_, DeckState>,
+    id: String,
+    enabled: bool,
+) -> Result<(), String> {
+    db::set_module_enabled(&state.pool, &id, enabled)
+        .await
+        .map_err(|error| error.to_string())
+}
+
+#[tauri::command]
+pub async fn modules_trigger_test(
+    state: State<'_, DeckState>,
+    id: String,
+) -> Result<LogLine, String> {
+    let log = LogLine {
+        ts: "14:03:00".to_string(),
+        level: crate::bus::LogLevel::Info,
+        source: format!("{id}.self-test"),
+        text: format!("triggered local test run for {id}"),
+    };
+    db::insert_log(&state.pool, &log)
+        .await
+        .map_err(|error| error.to_string())?;
+    Ok(log)
+}
+
 async fn list_modules_inner(pool: Option<&SqlitePool>) -> Result<Vec<ModuleSummary>, String> {
     if let Some(pool) = pool {
         return db::list_modules(pool)
@@ -69,6 +97,7 @@ async fn logs_recent_inner(
 #[cfg(test)]
 mod tests {
     use super::{list_modules_inner, logs_recent_inner, sim_status};
+    use crate::db::{connect_memory, list_modules, set_module_enabled};
 
     #[tokio::test]
     async fn modules_list_returns_reference_batch_without_state() {
@@ -94,5 +123,20 @@ mod tests {
             .expect("logs should load");
 
         assert!(logs.iter().any(|log| log.source == "f01.message_sniper"));
+    }
+
+    #[tokio::test]
+    async fn module_enabled_state_updates_in_sqlite() {
+        let pool = connect_memory().await.expect("db should initialize");
+        set_module_enabled(&pool, "f01", false)
+            .await
+            .expect("module should update");
+        let modules = list_modules(&pool).await.expect("modules should load");
+        let sniper = modules
+            .iter()
+            .find(|module| module.id == "f01")
+            .expect("f01 should exist");
+
+        assert!(!sniper.enabled);
     }
 }

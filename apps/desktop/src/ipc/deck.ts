@@ -50,6 +50,24 @@ export async function logsRecent(limit = 12): Promise<LogLine[]> {
   return tauri.invoke<LogLine[]>("logs_recent", { limit });
 }
 
+export async function modulesSetEnabled(id: string, enabled: boolean): Promise<void> {
+  const tauri = await resolveTauriCore();
+  if (!tauri) {
+    return;
+  }
+
+  await tauri.invoke<void>("modules_set_enabled", { id, enabled });
+}
+
+export async function modulesTriggerTest(id: string): Promise<LogLine | null> {
+  const tauri = await resolveTauriCore();
+  if (!tauri) {
+    return null;
+  }
+
+  return tauri.invoke<LogLine>("modules_trigger_test", { id });
+}
+
 async function resolveTauriCore(): Promise<null | { invoke<T>(command: string, args?: Record<string, unknown>): Promise<T> }> {
   if (!("__TAURI_INTERNALS__" in window)) {
     return null;

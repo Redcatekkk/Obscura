@@ -143,6 +143,9 @@
 ##         -working: true
 ##         -agent: "main"
 ##         -comment: "Extended the backend with SQLite-backed recent logs and a seeded reference engine, then wired the terminal feed to live backend logs with a safe browser fallback. Verified again with pnpm ci:frontend and pnpm ci:rust."
+##         -working: true
+##         -agent: "main"
+##         -comment: "Added modules_set_enabled and modules_trigger_test commands, optimistic UI toggles, backend-persisted test log insertion, and a component test for module toggling. Verified with pnpm ci:frontend and pnpm ci:rust."
 ## metadata:
 ##   created_by: "main_agent"
 ##   version: "1.0"
@@ -150,7 +153,8 @@
 ##   run_ui: false
 ## test_plan:
 ##   current_focus:
-##     - "M2 module enable/disable and trigger flow"
+##     - "M2 replace remaining static frontend module data"
+##     - "M3 typed IPC generation"
 ##   stuck_tasks: []
 ##   test_all: false
 ##   test_priority: "high_first"
@@ -161,3 +165,5 @@
 ##     -message: "M1 static UI shell implemented and locally verified. Next milestone should start replacing static data with backend bus/simverse flows."
 ##     -agent: "main"
 ##     -message: "M2 backend bus/db/simverse foundation implemented and verified. Continue with log/render integration and deeper module coverage."
+##     -agent: "main"
+##     -message: "M2 module enable/disable and trigger flow implemented and verified. Continue replacing remaining static frontend data and preparing typed IPC generation."
